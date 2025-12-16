@@ -18,9 +18,3 @@ export interface IResponseErrorType {
     message: string;
     statusCode: number;
 }
-
-export interface IHttpQueyParams {
-    page?: number;
-    offset?: number;
-    params?: {};
-}

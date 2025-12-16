@@ -1,9 +1,11 @@
 'use client';
 
+import { ListaProductos } from '@/features/productos/componentes/ListaProductos';
+
 const ProductosPage = () => {
     return (
         <div>
-            <h1>Productos</h1>
+            <ListaProductos />
         </div>
     );
 };

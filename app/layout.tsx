@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/navbar/Navbar';
+import { ReactQueryProvider } from '@/provider/ReactQueryProvider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -25,12 +26,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="es">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased bodyF`}>
-                <Navbar />
-                <div className="w-[1200px] m-auto ">
-                    <div className="">{children}</div>
-                </div>
-                <div>dasdas{/*  Aca va a ir el footer */}</div>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased `}>
+                <ReactQueryProvider>
+                    <Navbar />
+                    <div className="max-w-[1300px] m-auto">{children}</div>
+                </ReactQueryProvider>
             </body>
         </html>
     );
