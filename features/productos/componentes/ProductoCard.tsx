@@ -2,90 +2,114 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Package } from 'lucide-react';
+import { ShoppingCart, Package, Tag } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { convertirMoneda } from '@/lib/utils/conversorMoneda';
 import { IPresentaciones, IProducto } from '../types/producto.type';
-
-/// Ver el tema de los documento virtuales de mongo para lo que es el descuento, precio nuevo, etc.
+import { cn } from '@/lib/utils';
+import { useCarrito } from '@/features/carrito/hook/useCarrito';
 
 export function ProductoCard({ producto }: { producto: IProducto }) {
     const [selectedPresentacion, setSelectedPresentacion] = useState<IPresentaciones>(producto.presentaciones[0]);
 
+    const { addItem } = useCarrito();
+
+    const tieneDescuento = selectedPresentacion.infoDescuento?.tieneDescuento;
+
+    const handleToCart = () => {
+        addItem(producto, selectedPresentacion, 1);
+    };
     return (
-        <Card className="w-full h-full max-w-sm hover:shadow-lg transition-shadow duration-300 m-auto">
-            <CardHeader className="space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-xl font-semibold text-pretty leading-tight">{producto.nombre}</CardTitle>
-                    {!producto.activo && (
-                        <Badge variant="secondary" className="shrink-0">
-                            Inactivo
+        <Card className="h-full w-full hover:shadow-lg transition-all duration-300 relative overflow-hidden border-muted/40 my-2">
+            <CardHeader className="space-y-2 pb-3">
+                <div>
+                    <div>
+                        <h3>{producto.nombre}</h3>
+                        <div className="flex gap-3 py-2">
+                            <Badge variant={'secondary'}>{producto.categoria}</Badge>
+                            {producto.mascotas.map((item, index) => (
+                                <Badge variant={'outline'} key={index} className="capitalize">
+                                    {item}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
+                    {tieneDescuento && (
+                        <Badge className="bg-red-700 absolute top-1 right-1">
+                            {selectedPresentacion.infoDescuento?.porcentajeDescuento} % OFF
                         </Badge>
                     )}
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-xs">
-                        {producto.categoria}
-                    </Badge>
-                    {producto.mascotas.map(mascota => (
-                        <Badge key={mascota} variant="secondary" className="text-xs capitalize">
-                            {mascota}
-                        </Badge>
+            </CardHeader>
+            <CardContent className="space-y-5">
+                <div className="flex gap-2">
+                    {producto.presentaciones.map(item => (
+                        <Button
+                            key={item._id}
+                            variant={selectedPresentacion._id === item._id ? 'default' : 'outline'}
+                            size={'sm'}
+                            onClick={() => setSelectedPresentacion(item)}
+                            className={cn('text-xs relative')}
+                        >
+                            {item.nombre}
+                            {item.infoDescuento?.tieneDescuento && (
+                                <span className="rounded-full w-2 h-2 bg-red-400 absolute -top-0.5 -right-0.5"></span>
+                            )}
+                        </Button>
                     ))}
                 </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-                <CardDescription className="text-sm leading-relaxed line-clamp-3">{producto.descripcion}</CardDescription>
-
-                <div className="space-y-2">
-                    <span className="text-sm font-medium text-foreground">Selecciona tu presentación:</span>
-                    <div className="flex flex-wrap gap-2">
-                        {producto.presentaciones.map(presentacion => (
-                            <Button
-                                key={presentacion._id}
-                                variant={selectedPresentacion._id === presentacion._id ? 'default' : 'outline'}
-                                size="sm"
-                                className="text-xs"
-                                onClick={() => setSelectedPresentacion(presentacion)}
-                            >
-                                {presentacion.nombre}
-                            </Button>
-                        ))}
+                <div className="flex items-center justify-between text-xs border rounded-md px-2.5 py-1.5 bg-muted/30">
+                    <span className="text-muted-foreground font-medium">SKU: {selectedPresentacion.sku}</span>
+                    <div className="flex items-center gap-1">
+                        <span>Stock</span>
+                        <Package className="h-3 w-3 text-muted-foreground" />
+                        <span
+                            className={cn(
+                                'font-semibold',
+                                selectedPresentacion.stock === 0 ? 'text-destructive' : 'text-foreground',
+                            )}
+                        >
+                            {selectedPresentacion.stock}
+                        </span>
                     </div>
                 </div>
-
-                <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-                    <div className="flex items-center justify-between">
+                <div className="border rounded-md p-2.5 min-h-[72px] flex flex-col justify-center bg-muted/20">
+                    {tieneDescuento ? (
                         <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground">SKU</p>
-                            <p className="text-sm font-medium">{selectedPresentacion.sku}</p>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-muted-foreground line-through">
+                                    {convertirMoneda(selectedPresentacion.infoDescuento!.precioOriginal)}
+                                </span>
+                                <span className="text-xs text-emerald-600 font-semibold">
+                                    Ahorrás {convertirMoneda(selectedPresentacion.infoDescuento!.ahorro)}
+                                </span>
+                            </div>
+                            <div className="flex items-baseline justify-between">
+                                <span className="text-xs font-semibold text-red-600">OFERTA</span>
+                                <span className="text-2xl font-black text-red-600 tabular-nums">
+                                    {convertirMoneda(selectedPresentacion.infoDescuento!.precioFinal)}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <Package className="h-4 w-4" />
-                            <span className="text-sm font-medium">
-                                {selectedPresentacion.stock} {selectedPresentacion.stock === 1 ? 'disponible' : 'disponibles'}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="pt-2 border-t">
+                    ) : (
                         <div className="flex items-baseline justify-between">
-                            <span className="text-sm text-muted-foreground">Precio:</span>
-                            <span className="text-3xl font-bold text-foreground">
+                            <span className="text-xs text-muted-foreground font-medium">Precio</span>
+                            <span className="text-2xl font-black tabular-nums">
                                 {convertirMoneda(selectedPresentacion.precio)}
                             </span>
                         </div>
-                    </div>
+                    )}
                 </div>
             </CardContent>
-
-            <CardFooter className="flex gap-2">
-                <Button className="w-full" disabled={!producto.activo || selectedPresentacion.stock === 0}>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    {selectedPresentacion.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
+            <CardFooter className="pt-3">
+                <Button
+                    onClick={handleToCart}
+                    className={cn('w-full h-9 text-sm font-semibold')}
+                    disabled={!producto.activo || selectedPresentacion.stock === 0}
+                >
+                    <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
+                    {selectedPresentacion.stock === 0 ? 'Sin stock' : 'Agregar'}
                 </Button>
             </CardFooter>
         </Card>

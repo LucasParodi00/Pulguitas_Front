@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/navbar/Navbar';
 import { ReactQueryProvider } from '@/provider/ReactQueryProvider';
+import { CartProvider } from '@/features/carrito/provider/carrito.provider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -27,10 +28,12 @@ export default function RootLayout({
     return (
         <html lang="es">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased `}>
-                <ReactQueryProvider>
-                    <Navbar />
-                    <div className="max-w-[1300px] m-auto">{children}</div>
-                </ReactQueryProvider>
+                <CartProvider>
+                    <ReactQueryProvider>
+                        <Navbar />
+                        <div className="max-w-[1300px] m-auto">{children}</div>
+                    </ReactQueryProvider>
+                </CartProvider>
             </body>
         </html>
     );

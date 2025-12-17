@@ -1,13 +1,7 @@
-'use client';
+import { Productos } from '@/features/productos/componentes/Productos';
 
-import { ListaProductos } from '@/features/productos/componentes/ListaProductos';
-
-const ProductosPage = () => {
-    return (
-        <div>
-            <ListaProductos />
-        </div>
-    );
+const Page = () => {
+    return <Productos />;
 };
 
-export default ProductosPage;
+export default Page;

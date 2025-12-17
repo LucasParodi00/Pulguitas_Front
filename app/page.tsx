@@ -15,6 +15,9 @@ export default function Home() {
                     titulo="Promociones"
                     subtitulo="Mira nuestras promociones semanales!"
                     itemsPerView={{ mobile: 1, tablet: 2, desktop: 4 }}
+                    params={{
+                        tienePromocion: true,
+                    }}
                 />
                 <Banner data={imagenes} />
                 <CardToAction />

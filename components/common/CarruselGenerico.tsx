@@ -131,7 +131,7 @@ export function CarruselGenerico<T>({
         : [];
 
     return (
-        <div className={cn('relative w-full', className)}>
+        <div className={'relative w-full'}>
             <Carousel
                 setApi={setApi}
                 className="w-full"
@@ -141,9 +141,9 @@ export function CarruselGenerico<T>({
                 }}
                 plugins={plugins}
             >
-                <CarouselContent className={cn('-ml-2 md:-ml-4', gap)}>
+                <CarouselContent className={cn('px-2 -ml-2 md:-ml-4', gap)}>
                     {items.map((item, index) => (
-                        <CarouselItem key={index} className={cn('pl-2 md:pl-4', getBasisClass())}>
+                        <CarouselItem key={index} className={cn('pl-4 h-full ', getBasisClass())}>
                             {renderItem(item, index)}
                         </CarouselItem>
                     ))}

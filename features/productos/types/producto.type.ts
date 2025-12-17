@@ -16,9 +16,17 @@ export interface IPresentaciones {
     precio: number;
     stock: number;
     promocion: boolean;
-    descuento: number;
-    descuentoDesde: Date;
-    descuentoHasta: Date;
+    infoDescuento?: IPromocionProducto;
     sku: string;
     _id: string;
+}
+
+export interface IPromocionProducto {
+    tieneDescuento: boolean;
+    porcentajeDescuento: number;
+    precioOriginal: number;
+    precioFinal: number;
+    ahorro: number;
+    vigenciaDesde: Date;
+    vigenciaHasta: Date;
 }
