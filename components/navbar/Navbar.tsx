@@ -53,15 +53,12 @@ const Navbar = () => {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center px-4 md:px-6 max-w-[1500px] m-auto justify-between">
-                {/* --- SECCIÓN IZQUIERDA: LOGO + MENÚ DE ESCRITORIO --- */}
                 <div className="flex items-center gap-6 md:gap-10">
-                    {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2 font-bold text-lg">
                         <PawPrint className="h-6 w-6 text-primary" />
                         <span className="hidden sm:inline">Pulguitas</span>
                     </Link>
 
-                    {/* Navegación Desktop */}
                     <NavigationMenu className="hidden md:flex">
                         <NavigationMenuList>
                             {mainLinks.map(link => (
@@ -93,13 +90,9 @@ const Navbar = () => {
                     </NavigationMenu>
                 </div>
 
-                {/* --- SECCIÓN DERECHA: CARRITO + MENÚ MÓVIL --- */}
                 <div className="flex items-center gap-2">
-                    {/* Componente del Carrito Lateral (Sheet) */}
-                    {/* Al hacer clic en el ícono dentro de este componente, se abre el panel lateral */}
                     <CartSidebar />
 
-                    {/* Menú Hamburguesa (Solo visible en móvil) */}
                     <div className="md:hidden">
                         <MobileNav mainLinks={mainLinks} dropdownItems={dropdownItems} />
                     </div>

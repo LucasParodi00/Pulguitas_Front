@@ -34,7 +34,6 @@ export const CartSidebar = () => {
 
                 <Separator className="my-4 mr-6" />
 
-                {/* AREA DE PRODUCTOS CON SCROLL */}
                 {cart.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full space-y-4 pr-6">
                         <ShoppingCart className="h-16 w-16 text-muted-foreground/30" />
@@ -57,7 +56,6 @@ export const CartSidebar = () => {
 
                                     return (
                                         <div key={item.presentation._id} className="flex gap-4">
-                                            {/* IMAGEN DEL PRODUCTO (Placeholder o Real) */}
                                             <div className="h-20 w-20 rounded-md border bg-muted flex items-center justify-center overflow-hidden shrink-0 relative">
                                                 {/* Si tuvieras imagen en IProducto: 
                            <Image src={item.product.imagen} alt={item.product.nombre} fill className="object-cover" /> 
@@ -111,7 +109,6 @@ export const CartSidebar = () => {
                             </div>
                         </ScrollArea>
 
-                        {/* FOOTER FIJO */}
                         <div className="mt-auto pr-6 pt-4 bg-background">
                             <Separator className="mb-4" />
                             <div className="space-y-4">
@@ -121,13 +118,13 @@ export const CartSidebar = () => {
                                 </div>
 
                                 <SheetClose asChild>
-                                    <Link href="/checkout" className="w-full block">
+                                    <Link href="/carrito/checkout" className="w-full block">
                                         <Button className="w-full h-12 text-base shadow-lg">Iniciar Compra</Button>
                                     </Link>
                                 </SheetClose>
 
                                 <SheetClose asChild>
-                                    <Link href="/cart" className="w-full block text-center">
+                                    <Link href="/carrito" className="w-full block text-center">
                                         <Button variant="link" className="text-muted-foreground text-xs">
                                             Ver carrito detallado
                                         </Button>

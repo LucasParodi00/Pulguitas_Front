@@ -22,15 +22,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [cart, isLoaded]);
 
+    // --- FUNCIONALIDAD: Agregar al carrito (CORREGIDA) ---
     const addItem = (product: IProducto, presentation: IPresentaciones, quantity: number = 1) => {
         setCart(currentCart => {
-            // Buscamos si ya existe ESTA presentación específica en el carrito
             const existingItemIndex = currentCart.findIndex(item => item.presentation._id === presentation._id);
 
-            // Si existe, sumamos la cantidad
             if (existingItemIndex >= 0) {
+                // 1. Hacemos copia del array
                 const newCart = [...currentCart];
-                newCart[existingItemIndex].quantity += quantity;
+
+                // 2. IMPORTANTE: Hacemos copia del ítem específico que vamos a tocar
+                // Esto evita la mutación directa que causaba el salto de 1 a 3
+                newCart[existingItemIndex] = {
+                    ...newCart[existingItemIndex],
+                    quantity: newCart[existingItemIndex].quantity + quantity,
+                };
+
                 return newCart;
             }
 
@@ -39,12 +46,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
-    // --- FUNCIONALIDAD: Quitar ítem completo ---
     const removeItem = (presentationId: string) => {
         setCart(currentCart => currentCart.filter(item => item.presentation._id !== presentationId));
     };
 
-    // --- FUNCIONALIDAD: Restar 1 unidad (opcional, útil para botones -) ---
     const removeOneUnit = (presentationId: string) => {
         setCart(currentCart => {
             return currentCart
@@ -58,19 +63,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
-    // --- FUNCIONALIDAD: Limpiar carrito ---
     const clearCart = () => {
         setCart([]);
         localStorage.removeItem('cart-pulguitas');
     };
 
-    // --- CALCULADOS ---
-    // Cantidad total de productos (bultos/unidades)
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-    // Precio total (Considerando lógica de descuento si existe)
     const totalAmount = cart.reduce((acc, item) => {
-        // Determinamos el precio real (si tiene descuento activo o precio normal)
         const price =
             item.presentation.promocion && item.presentation.infoDescuento?.precioFinal
                 ? item.presentation.infoDescuento.precioFinal
@@ -79,7 +79,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         return acc + price * item.quantity;
     }, 0);
 
-    // Evitamos renderizar hasta que el cliente haya cargado (evita errores de hidratación en Next.js)
     if (!isLoaded) {
         return null;
     }
