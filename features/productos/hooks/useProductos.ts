@@ -11,3 +11,12 @@ export const useListarProductos = (params = {}) => {
         placeholderData: keepPreviousData,
     });
 };
+
+export const useObtenerUnProducto = (id: string, params = {}) => {
+    return useQuery({
+        queryKey: ['productos', id, params],
+        queryFn: () => productoService.obtenerUno(id, params),
+        placeholderData: keepPreviousData,
+        enabled: !!id,
+    });
+};

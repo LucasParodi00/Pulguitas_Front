@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/navbar/Navbar';
 import { ReactQueryProvider } from '@/provider/ReactQueryProvider';
 import { CartProvider } from '@/features/carrito/provider/carrito.provider';
+import { AuthProvider } from '@/features/auth/provider/auth.provider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -28,12 +29,14 @@ export default function RootLayout({
     return (
         <html lang="es">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased `}>
-                <CartProvider>
-                    <ReactQueryProvider>
-                        <Navbar />
-                        <div className="max-w-[1300px] m-auto">{children}</div>
-                    </ReactQueryProvider>
-                </CartProvider>
+                <AuthProvider>
+                    <CartProvider>
+                        <ReactQueryProvider>
+                            <Navbar />
+                            <div className="max-w-[1300px] m-auto">{children}</div>
+                        </ReactQueryProvider>
+                    </CartProvider>
+                </AuthProvider>
             </body>
         </html>
     );

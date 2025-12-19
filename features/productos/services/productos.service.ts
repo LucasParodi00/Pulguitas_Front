@@ -1,13 +1,13 @@
 import { apiFetch } from '@/lib/http/apiFetch';
 import { IProducto } from '../types/producto.type';
-import { IRespuestaApiPaginada } from '@/lib/types/http.type';
+import { IResponseSucces, IRespuestaApiPaginada } from '@/lib/types/http.type';
 
 export const productoService = {
     listar: async (params = {}): Promise<IRespuestaApiPaginada<IProducto>> => {
         return apiFetch({ service: 'productos', params });
     },
 
-    obtenerUno: async (id: string, params = {}): Promise<IProducto> => {
+    obtenerUno: async (id: string, params = {}): Promise<IResponseSucces<IProducto>> => {
         return apiFetch({ service: 'productos', params, path: `/${id}` });
     },
 

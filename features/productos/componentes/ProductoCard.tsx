@@ -9,6 +9,7 @@ import { convertirMoneda } from '@/lib/utils/conversorMoneda';
 import { IPresentaciones, IProducto } from '../types/producto.type';
 import { cn } from '@/lib/utils';
 import { useCarrito } from '@/features/carrito/hook/useCarrito';
+import Link from 'next/link';
 
 export function ProductoCard({ producto }: { producto: IProducto }) {
     const [selectedPresentacion, setSelectedPresentacion] = useState<IPresentaciones>(producto.presentaciones[0]);
@@ -22,26 +23,28 @@ export function ProductoCard({ producto }: { producto: IProducto }) {
     };
     return (
         <Card className="h-full w-full hover:shadow-lg transition-all duration-300 relative overflow-hidden border-muted/40 my-2">
-            <CardHeader className="space-y-2 pb-3">
-                <div>
+            <Link href={`/productos/detalle/${producto._id}`}>
+                <CardHeader className="space-y-2 pb-3">
                     <div>
-                        <h3>{producto.nombre}</h3>
-                        <div className="flex gap-3 py-2">
-                            <Badge variant={'secondary'}>{producto.categoria}</Badge>
-                            {producto.mascotas.map((item, index) => (
-                                <Badge variant={'outline'} key={index} className="capitalize">
-                                    {item}
-                                </Badge>
-                            ))}
+                        <div>
+                            <h3>{producto.nombre}</h3>
+                            <div className="flex gap-3 py-2">
+                                <Badge variant={'secondary'}>{producto.categoria}</Badge>
+                                {producto.mascotas.map((item, index) => (
+                                    <Badge variant={'outline'} key={index} className="capitalize">
+                                        {item}
+                                    </Badge>
+                                ))}
+                            </div>
                         </div>
+                        {tieneDescuento && (
+                            <Badge className="bg-red-700 absolute top-1 right-1">
+                                {selectedPresentacion.infoDescuento?.porcentajeDescuento} % OFF
+                            </Badge>
+                        )}
                     </div>
-                    {tieneDescuento && (
-                        <Badge className="bg-red-700 absolute top-1 right-1">
-                            {selectedPresentacion.infoDescuento?.porcentajeDescuento} % OFF
-                        </Badge>
-                    )}
-                </div>
-            </CardHeader>
+                </CardHeader>
+            </Link>
             <CardContent className="space-y-5">
                 <div className="flex gap-2">
                     {producto.presentaciones.map(item => (

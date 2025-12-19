@@ -18,3 +18,10 @@ export interface IResponseErrorType {
     message: string;
     statusCode: number;
 }
+
+export interface IResponseSucces<T> {
+    success: boolean;
+    message: string;
+    data: T;
+    timestamp: string;
+}
