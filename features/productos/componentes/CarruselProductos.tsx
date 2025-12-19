@@ -27,27 +27,36 @@ export const CarruselProductos = ({
     const { data, isLoading, isError } = useListarProductos(params);
 
     if (isError) {
-        return <div className="w-full p-8 text-center text-red-500">Error al cargar los productos</div>;
+        return (
+            <div className="w-full p-4 md:p-8 text-center text-red-500 bg-red-50 rounded-lg m-4">
+                Error al cargar los productos
+            </div>
+        );
     }
 
     return (
-        <section className="w-full py-8 ">
-            <div className="my-5">
-                {titulo && <h2 className="text-2xl font-semibold">{titulo}</h2>}
-                {subtitulo && <h4 className="text-sm">{subtitulo}</h4>}
+        <section className="w-full py-8 md:py-12">
+            {/* Contenedor con padding para que no toque los bordes en mobile */}
+            <div className="container mx-auto px-4 mb-6">
+                <div className="flex flex-col gap-1">
+                    {titulo && <h2 className="text-xl md:text-2xl font-bold text-gray-900">{titulo}</h2>}
+                    {subtitulo && <h4 className="text-sm md:text-base text-gray-500">{subtitulo}</h4>}
+                </div>
             </div>
 
-            <CarruselGenerico<IProducto>
-                items={data?.data || []}
-                renderItem={producto => <ProductoCard producto={producto} />}
-                itemsPerView={itemsPerView}
-                autoplay={autoplay}
-                autoplayDelay={3000}
-                showControls={true}
-                showIndicators={false}
-                loading={isLoading}
-                emptyMessage="No hay productos disponibles"
-            />
+            <div className="container mx-auto px-4">
+                <CarruselGenerico<IProducto>
+                    items={data?.data || []}
+                    renderItem={producto => <ProductoCard producto={producto} />}
+                    itemsPerView={itemsPerView}
+                    autoplay={autoplay}
+                    autoplayDelay={3000}
+                    showControls={true}
+                    showIndicators={false}
+                    loading={isLoading}
+                    emptyMessage="No hay productos disponibles"
+                />
+            </div>
         </section>
     );
 };

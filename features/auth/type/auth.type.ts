@@ -35,7 +35,7 @@ export interface DecodedToken {
     sub: string;
     email: string;
     name: string;
-    role?: string;
+    role?: 'user' | 'admin';
     exp: number;
     iat: number;
 }

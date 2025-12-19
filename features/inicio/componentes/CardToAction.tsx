@@ -10,13 +10,18 @@ export const CardToAction = () => {
         <section className="w-full py-12 md:py-24 lg:py-32 bg-background overflow-hidden">
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="grid gap-10 lg:grid-cols-2 items-center">
-                    <div className="flex flex-col gap-6 items-center lg:items-start text-center lg:text-left">
-                        <div className="flex gap-5">
-                            <Badge variant="secondary">Veterinara</Badge>
-                            <Badge variant={'secondary'}> Petshop Integral</Badge>
+                    {/* Contenido de Texto */}
+                    <div className="flex flex-col gap-6 items-center lg:items-start text-center lg:text-left order-2 lg:order-1">
+                        <div className="flex gap-3 flex-wrap justify-center lg:justify-start">
+                            <Badge variant="secondary" className="text-sm px-3 py-1">
+                                Veterinaria
+                            </Badge>
+                            <Badge variant="secondary" className="text-sm px-3 py-1">
+                                Petshop Integral
+                            </Badge>
                         </div>
 
-                        <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter">
                             Cuidamos lo que <br className="hidden lg:block" />
                             <span className="text-primary">más amas.</span>
                         </h1>
@@ -30,7 +35,7 @@ export const CardToAction = () => {
                             <Button
                                 asChild
                                 size="lg"
-                                className="h-12 px-8 text-base shadow-lg hover:translate-y-[-2px] transition-all"
+                                className="h-12 px-8 text-base shadow-lg hover:translate-y-[-2px] transition-all w-full sm:w-auto"
                             >
                                 <Link href="/productos">
                                     <ShoppingBag className="mr-2 h-5 w-5" />
@@ -42,7 +47,7 @@ export const CardToAction = () => {
                                 asChild
                                 variant="outline"
                                 size="lg"
-                                className="h-12 px-8 text-base hover:bg-secondary/50 transition-all"
+                                className="h-12 px-8 text-base w-full sm:w-auto hover:bg-secondary/50"
                             >
                                 <Link href="/servicios">
                                     <Stethoscope className="mr-2 h-5 w-5 text-primary" />
@@ -61,7 +66,8 @@ export const CardToAction = () => {
                         </div>
                     </div>
 
-                    <div className="relative mx-auto lg:ml-auto w-full max-w-[500px] aspect-square lg:max-w-none">
+                    {/* Imagen Hero */}
+                    <div className="relative order-1 lg:order-2 w-full max-w-[400px] lg:max-w-none mx-auto aspect-square">
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary rounded-full blur-3xl opacity-50 transform translate-x-10 translate-y-10" />
 
                         <div className="relative rounded-3xl overflow-hidden border bg-background shadow-2xl h-full w-full">
@@ -71,6 +77,7 @@ export const CardToAction = () => {
                                 fill
                                 className="object-cover"
                                 priority
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
                         </div>
                     </div>

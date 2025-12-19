@@ -3,11 +3,9 @@ import CheckoutPage from '@/features/carrito/componentes/Checkout';
 
 const Page = () => {
     return (
-        // <RutasProtegidas>
-        <div>
+        <RutasProtegidas>
             <CheckoutPage />
-        </div>
-        // </RutasProtegidas>
+        </RutasProtegidas>
     );
 };
 

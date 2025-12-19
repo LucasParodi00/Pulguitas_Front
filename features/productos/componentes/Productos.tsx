@@ -74,18 +74,23 @@ export const Productos = ({ categoriaInicial }: ProductosContentProps) => {
     };
 
     if (isLoading) {
-        return <LoadingData />;
+        return (
+            <div className="flex justify-center items-center py-20">
+                <LoadingData texto="Cargando catálogo..." />
+            </div>
+        );
     }
 
     if (error && !data) {
-        return <ErrorCard titulo="Error" descripcion={error.message} />;
+        return (
+            <div className="max-w-md mx-auto py-10">
+                <ErrorCard titulo="Hubo un problema" descripcion={error.message} variante="error" />
+            </div>
+        );
     }
 
-    if (data?.data.length === 0) {
-        return <ErrorCard titulo="Atencion" descripcion={'No se encontraron productos.'} variante="info" />;
-    }
     return (
-        <div>
+        <div className="container mx-auto px-4 pb-12">
             <FiltrosProductos
                 filtrosIniciales={{
                     marca: params.marca,
@@ -95,7 +100,18 @@ export const Productos = ({ categoriaInicial }: ProductosContentProps) => {
                 onAplicarFiltros={handleAplicarFiltros}
                 onLimpiarFiltros={handleLimpiarFiltros}
             />
-            <ListaProductos data={data} onPageChange={handlePageChange} />
+
+            {data?.data.length === 0 ? (
+                <div className="max-w-2xl mx-auto mt-8">
+                    <ErrorCard
+                        titulo="Sin resultados"
+                        descripcion="No encontramos productos con esos filtros. Intenta limpiar los filtros para ver todo el catálogo."
+                        variante="info"
+                    />
+                </div>
+            ) : (
+                <ListaProductos data={data} onPageChange={handlePageChange} />
+            )}
         </div>
     );
 };

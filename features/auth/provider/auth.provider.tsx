@@ -5,8 +5,28 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUserFromToken, isTokenExpired } from '../utils/jwt.utils';
 import { syncTokenToCookie } from '../utils/auth.utils';
-import { AuthContextType, AuthState, LoginCredentials, RegisterData } from '../type/auth.type';
+import { AuthContextType, AuthState, LoginCredentials, RegisterData, User } from '../type/auth.type';
 import { storage } from '../lib/storage';
+
+type MockUser = User & { password: string };
+
+// 1. DEFINIMOS TUS DATOS ESTÁTICOS (MOCKS)
+const MOCK_USERS: MockUser[] = [
+    {
+        email: 'admin@pulguitas.com',
+        password: '123', // Contraseña sencilla para pruebas
+        name: 'Admin Pulguitas',
+        role: 'admin',
+        id: 'mock-id-1',
+    },
+    {
+        email: 'usuario@test.com',
+        password: '123',
+        name: 'Juan Perez',
+        role: 'user',
+        id: 'mock-id-2',
+    },
+];
 
 const initialState: AuthState = {
     user: null,
@@ -21,7 +41,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<AuthState>(initialState);
     const router = useRouter();
 
-    // Verificar autenticación al montar
     const checkAuth = useCallback(() => {
         const token = storage.getToken();
 
@@ -30,14 +49,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return;
         }
 
-        // Verificar si el token expiró
+        // ⚠️ PEQUEÑO AJUSTE PARA EL MOCK:
+        // Si el token es nuestro token falso, restauramos la sesión manualmente
+        // sin pasar por las validaciones de JWT reales (porque fallarían).
+        if (token.startsWith('mock-token-')) {
+            try {
+                // Recuperamos los datos del usuario que "escondimos" en el token falso
+                const userJson = atob(token.replace('mock-token-', ''));
+                const user = JSON.parse(userJson);
+
+                setState({
+                    user,
+                    token,
+                    isAuthenticated: true,
+                    isLoading: false,
+                });
+                return;
+            } catch (e) {
+                // Si falla, limpiamos
+                storage.clearAuthData();
+                setState({ ...initialState, isLoading: false });
+                return;
+            }
+        }
+
+        // --- FLUJO NORMAL (JWT REAL) ---
         if (isTokenExpired(token)) {
             storage.clearAuthData();
             setState({ ...initialState, isLoading: false });
             return;
         }
 
-        // Extraer usuario del token
         const user = getUserFromToken(token);
         if (!user) {
             storage.clearAuthData();
@@ -57,11 +99,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         checkAuth();
     }, [checkAuth]);
 
-    // Login
+    // Login MODIFICADO
     const login = async (credentials: LoginCredentials) => {
         try {
-            // Simulación de llamada a API
-            // En producción, reemplazar con tu llamada real
+            // 2. PRIMERO PREGUNTAMOS A LOS DATOS ESTÁTICOS
+            const mockUser = MOCK_USERS.find(u => u.email === credentials.email && u.password === credentials.password);
+
+            if (mockUser) {
+                console.log('⚡ Iniciando sesión con MOCK DATA (Simulación)');
+
+                // Creamos un token falso que contiene los datos del usuario en base64
+                // para poder recuperarlos al recargar la página en checkAuth
+                const mockToken = `mock-token-${btoa(JSON.stringify(mockUser))}`;
+
+                storage.setToken(mockToken);
+                syncTokenToCookie(mockToken);
+
+                setState({
+                    user: mockUser,
+                    token: mockToken,
+                    isAuthenticated: true,
+                    isLoading: false,
+                });
+
+                const redirectUrl = storage.getRedirectUrl() || '/';
+                storage.removeRedirectUrl();
+                router.push(redirectUrl);
+
+                return; // 🛑 DETENEMOS AQUÍ para no llamar a la API
+            }
+
+            // 3. SI NO COINCIDE, CONSULTAMOS A LA API REAL
+            console.log('🌐 Credenciales no estáticas, consultando API...');
+
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -74,17 +144,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const { token } = await response.json();
 
-            // Guardar token en localStorage
             storage.setToken(token);
-
-            // Sincronizar con cookie para que el middleware pueda acceder
             syncTokenToCookie(token);
 
-            // Extraer usuario
             const user = getUserFromToken(token);
             if (!user) throw new Error('Token inválido');
 
-            // Actualizar estado
             setState({
                 user,
                 token,
@@ -92,7 +157,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 isLoading: false,
             });
 
-            // Redirigir
             const redirectUrl = storage.getRedirectUrl() || '/';
             storage.removeRedirectUrl();
             router.push(redirectUrl);
@@ -102,15 +166,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    // Register
     const register = async (data: RegisterData) => {
+        // ... (Tu código de registro original sigue igual)
+        // Opcionalmente podrías agregar un mock aquí también si quisieras
         try {
-            // Validación básica
             if (data.password !== data.confirmPassword) {
                 throw new Error('Las contraseñas no coinciden');
             }
-
-            // Simulación de llamada a API
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -126,18 +188,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
 
             const { token } = await response.json();
-
-            // Guardar token en localStorage
             storage.setToken(token);
-
-            // Sincronizar con cookie para que el middleware pueda acceder
             syncTokenToCookie(token);
-
-            // Extraer usuario
             const user = getUserFromToken(token);
+
             if (!user) throw new Error('Token inválido');
 
-            // Actualizar estado
             setState({
                 user,
                 token,
@@ -145,7 +201,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 isLoading: false,
             });
 
-            // Redirigir
             const redirectUrl = storage.getRedirectUrl() || '/';
             storage.removeRedirectUrl();
             router.push(redirectUrl);
@@ -155,17 +210,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    // Logout
     const logout = useCallback(() => {
         storage.clearAuthData();
-        syncTokenToCookie(null); // Limpiar cookie
+        syncTokenToCookie(null);
         setState({
             user: null,
             token: null,
             isAuthenticated: false,
             isLoading: false,
         });
-        router.push('/login');
+        router.push('/auth/login');
     }, [router]);
 
     return (

@@ -13,25 +13,31 @@ const beneficios: ICardBeneficios[] = [
     { icono: Store, titulo: 'Retiro gratuito', subtitulo: 'en sucursal' },
     { icono: CreditCard, titulo: 'Medios de pago', subtitulo: 'y promociones' },
 ];
-
 export const Beneficios = () => {
     return (
-        <div className="grid grid-cols-4 gap-5 px-10">
-            {beneficios.map((item, index) => {
-                const Icon = item.icono;
-
-                return (
-                    <div key={index} className="flex gap-5 items-center p-5  rounded-xl border hover:bg-muted/50 duration-400">
-                        <div className="bg-green-100 p-4 rounded-full ">
-                            <Icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                            <p className="font-semibold">{item.titulo}</p>
-                            <span className="text-sm text-muted-foreground">{item.subtitulo}</span>
-                        </div>
-                    </div>
-                );
-            })}
+        <div className="w-full px-4 md:px-6 py-8">
+            <div className="w-full max-w-7xl mx-auto">
+                {/* Grid: 1 col (movil) -> 2 cols (tablet) -> 4 cols (desktop) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {beneficios.map((item, index) => {
+                        const Icon = item.icono;
+                        return (
+                            <div
+                                key={index}
+                                className="flex gap-4 items-center p-4 rounded-xl border bg-card text-card-foreground shadow-sm hover:bg-muted/50 transition-colors"
+                            >
+                                <div className="bg-green-100 p-3 rounded-full shrink-0">
+                                    <Icon className="w-6 h-6 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-sm md:text-base">{item.titulo}</p>
+                                    <span className="text-xs md:text-sm text-muted-foreground">{item.subtitulo}</span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 };

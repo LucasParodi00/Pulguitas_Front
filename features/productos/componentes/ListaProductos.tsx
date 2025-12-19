@@ -11,18 +11,23 @@ interface IListarProductos {
 
 export const ListaProductos = ({ data, onPageChange }: IListarProductos) => {
     return (
-        <div className="py-5 w-full">
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
+        <div className="py-6 w-full space-y-8">
+            {/* Grid optimizado para evitar columnas muy estrechas en móviles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 {data?.data.map(item => (
                     <ProductoCard key={item._id} producto={item} />
                 ))}
             </div>
-            {data?.pagination && (
-                <Paginador
-                    currentPage={data.pagination.currentPage}
-                    totalPages={data.pagination.totalPages}
-                    onPageChange={onPageChange}
-                />
+
+            {/* Paginador centrado */}
+            {data?.pagination && data.pagination.totalPages > 1 && (
+                <div className="flex justify-center w-full pt-4">
+                    <Paginador
+                        currentPage={data.pagination.currentPage}
+                        totalPages={data.pagination.totalPages}
+                        onPageChange={onPageChange}
+                    />
+                </div>
             )}
         </div>
     );

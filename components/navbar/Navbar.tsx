@@ -13,6 +13,8 @@ import { PawPrint } from 'lucide-react';
 import { NavbarItem } from './Navbaritem';
 import { MobileNav } from './MovilNavbar.';
 import { CartSidebar } from '@/features/carrito/componentes/CarritoSidebar';
+import { UsuarioNavbar } from './UsuarioNavbar';
+// IMPORTAR EL NUEVO COMPONENTE
 
 interface IItems {
     titulo: string;
@@ -41,10 +43,16 @@ const dropdownItems: IItems[] = [
         descripcion: 'Todos los accesorios que te imagines, moda, estilo, todo para ellos.',
         href: '/productos/accesorios',
     },
+    {
+        titulo: 'Medicamentos',
+        descripcion: 'Medicamentos para cuando tu mascota necesita de su mejor amigo.',
+        href: '/productos/medicamentos',
+    },
 ];
 
 const mainLinks = [
     { href: '/', label: 'Inicio' },
+    { href: '/servicios', label: 'Servicios' },
     { href: '/nosotros', label: 'Nosotros' },
     { href: '/contacto', label: 'Contacto' },
 ];
@@ -91,7 +99,11 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Componente del Carrito */}
                     <CartSidebar />
+
+                    {/* Componente de Usuario (Login/Avatar) */}
+                    <UsuarioNavbar />
 
                     <div className="md:hidden">
                         <MobileNav mainLinks={mainLinks} dropdownItems={dropdownItems} />

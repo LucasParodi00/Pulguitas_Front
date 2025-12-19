@@ -65,52 +65,51 @@ export function CarruselGenerico<T>({
         [api],
     );
 
-    // Mapeo de clases completas para Tailwind
-    // IMPORTANTE: Las clases deben estar escritas completas para que Tailwind las detecte
+    // Lógica optimizada para las clases de ancho
     const getBasisClass = () => {
         const { mobile = 1, tablet = 2, desktop = 4 } = itemsPerView;
 
-        // Clases mobile
-        const mobileClass =
-            {
-                1: 'basis-full',
-                2: 'basis-1/2',
-                3: 'basis-1/3',
-                4: 'basis-1/4',
-                5: 'basis-1/5',
-                6: 'basis-1/6',
-            }[mobile] || 'basis-full';
+        // Diccionarios de clases (Tailwind necesita clases completas para el tree-shaking)
+        const mobileClasses: Record<number, string> = {
+            1: 'basis-full',
+            2: 'basis-1/2',
+            3: 'basis-1/3',
+            4: 'basis-1/4',
+            5: 'basis-1/5',
+        };
 
-        // Clases tablet
-        const tabletClass = {
+        const tabletClasses: Record<number, string> = {
             1: 'md:basis-full',
             2: 'md:basis-1/2',
             3: 'md:basis-1/3',
             4: 'md:basis-1/4',
             5: 'md:basis-1/5',
-            6: 'md:basis-1/6',
-        }[tablet];
+        };
 
-        // Clases desktop
-        const desktopClass = {
+        const desktopClasses: Record<number, string> = {
             1: 'lg:basis-full',
             2: 'lg:basis-1/2',
             3: 'lg:basis-1/3',
             4: 'lg:basis-1/4',
             5: 'lg:basis-1/5',
-            6: 'lg:basis-1/6',
-        }[desktop];
+        };
 
-        return cn(mobileClass, tabletClass, desktopClass);
+        return cn(
+            mobileClasses[mobile] || 'basis-full',
+            tabletClasses[tablet] || 'md:basis-1/2',
+            desktopClasses[desktop] || 'lg:basis-1/4',
+        );
     };
 
     if (loading) {
         return (
             <div className={cn('w-full', className)}>
-                <div className="flex gap-4 animate-pulse">
-                    {Array.from({ length: itemsPerView.desktop || 4 }).map((_, i) => (
-                        <div key={i} className="flex-1 h-64 bg-gray-200 rounded-lg" />
-                    ))}
+                {/* Skeleton loader responsive: muestra menos items en móvil */}
+                <div className="flex gap-4 animate-pulse overflow-hidden">
+                    <div className="flex-1 h-64 bg-gray-200 rounded-lg shrink-0 w-full md:w-1/2 lg:w-1/4" />
+                    <div className="hidden md:block flex-1 h-64 bg-gray-200 rounded-lg" />
+                    <div className="hidden lg:block flex-1 h-64 bg-gray-200 rounded-lg" />
+                    <div className="hidden lg:block flex-1 h-64 bg-gray-200 rounded-lg" />
                 </div>
             </div>
         );
@@ -131,7 +130,7 @@ export function CarruselGenerico<T>({
         : [];
 
     return (
-        <div className={'relative w-full'}>
+        <div className={cn('relative w-full group', className)}>
             <Carousel
                 setApi={setApi}
                 className="w-full"
@@ -141,31 +140,36 @@ export function CarruselGenerico<T>({
                 }}
                 plugins={plugins}
             >
-                <CarouselContent className={cn('px-2 -ml-2 md:-ml-4', gap)}>
+                <CarouselContent className={cn('-ml-4', gap)}>
+                    {' '}
+                    {/* Ajuste de margen negativo estandarizado */}
                     {items.map((item, index) => (
-                        <CarouselItem key={index} className={cn('pl-4 h-full ', getBasisClass())}>
+                        <CarouselItem key={index} className={cn('pl-4', getBasisClass())}>
                             {renderItem(item, index)}
                         </CarouselItem>
                     ))}
                 </CarouselContent>
 
+                {/* CONTROLES: Ocultos en mobile (hidden), visibles en md (md:flex). 
+            Se muestran solo al hacer hover en desktop para limpieza visual */}
                 {showControls && items.length > (itemsPerView.desktop || 4) && (
                     <>
-                        <CarouselPrevious className="left-0 -translate-x-12" />
-                        <CarouselNext className="right-0 translate-x-12" />
+                        <CarouselPrevious className="hidden md:flex -left-12 lg:-left-4 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50" />
+                        <CarouselNext className="hidden md:flex -right-12 lg:-right-4 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50" />
                     </>
                 )}
             </Carousel>
 
+            {/* INDICADORES: Mejorados visualmente */}
             {showIndicators && count > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
+                <div className="flex justify-center gap-2 mt-6 flex-wrap px-4">
                     {Array.from({ length: count }).map((_, index) => (
                         <button
                             key={index}
                             onClick={() => scrollTo(index)}
                             className={cn(
-                                'w-2 h-2 rounded-full transition-all duration-300',
-                                current === index ? 'bg-primary w-8' : 'bg-gray-300 hover:bg-gray-400',
+                                'h-2 rounded-full transition-all duration-300',
+                                current === index ? 'bg-primary w-8' : 'bg-gray-300 w-2 hover:bg-gray-400',
                             )}
                             aria-label={`Ir a diapositiva ${index + 1}`}
                         />

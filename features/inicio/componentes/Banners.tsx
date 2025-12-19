@@ -1,14 +1,13 @@
-import { ArrowRight, Clock1, LucideIcon, Store, UserSearch } from 'lucide-react';
+import { ArrowRight, Clock1, CreditCard, LucideIcon, Store, Truck, UserSearch, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
 export interface IImagenesBanner {
     src: string;
     titulo?: string;
     href: string;
     icono?: LucideIcon;
-    ancho: number;
-    altura: number;
+    ancho?: number; // Opcional porque usamos layout responsive
+    altura?: number; // Opcional porque usamos layout responsive
     subtitulo?: string;
 }
 
@@ -16,70 +15,63 @@ interface IBanner {
     data: IImagenesBanner[];
 }
 
+interface ICardBeneficios {
+    icono: LucideIcon;
+    titulo: string;
+    subtitulo: string;
+    onClick?: () => void;
+}
+
+// --- DATOS (CONSTANTES) ---
+
 export const imagenes: IImagenesBanner[] = [
     {
         src: '/banner1.png',
         titulo: 'Ver tienda',
         href: '/productos',
         icono: Store,
-        ancho: 430,
-        altura: 270,
     },
     {
         src: '/banner2.png',
         titulo: 'Reservar Turno',
         href: '/turnos',
         icono: Clock1,
-        ancho: 430,
-        altura: 270,
     },
     {
         src: '/banner3.png',
         titulo: 'Conocenos',
         href: '/nosotros',
         icono: UserSearch,
-        ancho: 430,
-        altura: 270,
     },
 ];
 
 export const imagenesCollage: IImagenesBanner[] = [
     {
         src: '/conocenos.png',
-        altura: 310,
-        ancho: 230,
         href: '/nosotros',
         titulo: 'Pulguitas.',
         subtitulo: 'Conocenos',
     },
     {
         src: '/adopciones.png',
-        altura: 310,
-        ancho: 230,
         href: '/adopciones',
         titulo: 'Adopciones',
         subtitulo: '',
     },
     {
         src: '/belleza.png',
-        altura: 310,
-        ancho: 230,
         href: '/servicios',
         titulo: 'Baño y Belleza',
         subtitulo: 'Reserva un turno.',
     },
     {
         src: '/veterinaria.png',
-        altura: 310,
-        ancho: 230,
         href: '/adopciones',
         titulo: 'Veterinaria',
-        subtitulo: 'Consulta nuestros turnos disponibles.',
+        subtitulo: 'Consulta nuestros turnos.',
     },
     {
         src: '/envios.png',
-        altura: 310,
-        ancho: 230,
         href: '/adopciones',
         titulo: 'Envios',
         subtitulo: 'Envios Programados.',
@@ -88,27 +80,40 @@ export const imagenesCollage: IImagenesBanner[] = [
 
 export const Banner = ({ data }: IBanner) => {
     return (
-        <div className="py-10">
-            <div>
-                <h2 className="text-2xl font-semibold">Destacados! </h2>
-                <h4 className="text-sm">Encontra lo mejor para ellos.</h4>
+        <section className="py-8 md:py-12 px-4 md:px-6 w-full max-w-7xl mx-auto">
+            <div className="mb-6">
+                <h2 className="text-2xl md:text-3xl font-semibold">Destacados!</h2>
+                <h4 className="text-sm md:text-base text-muted-foreground">Encontra lo mejor para ellos.</h4>
             </div>
-            <div className="grid grid-cols-3 gap-3 mt-5">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {data.map(item => {
                     const Icono = item.icono ?? Store;
                     return (
-                        <Link key={item.titulo} href={item.href} className="overflow-hidden">
-                            <div className="rounded-4xl overflow-hidden border-2 border-gray-300 bg-white hover:bg-muted duration-300 ">
-                                <Image src={item.src} alt={item.titulo ?? 'Imagen Banner'} width={430} height={270} />
+                        <Link key={item.titulo} href={item.href} className="group block h-full">
+                            <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white hover:shadow-lg hover:border-primary/50 transition-all duration-300 h-full flex flex-col">
+                                {/* Contenedor de Imagen con Aspect Ratio */}
+                                <div className="relative w-full aspect-[16/10] overflow-hidden">
+                                    <Image
+                                        src={item.src}
+                                        alt={item.titulo ?? 'Imagen Banner'}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    />
+                                </div>
+
                                 {item.titulo && (
-                                    <div className="px-5 flex gap-5 items-center py-4">
+                                    <div className="p-4 md:p-5 flex gap-4 items-center mt-auto">
                                         {item.icono && (
-                                            <div className="bg-green-200 rounded-full p-2">
-                                                <Icono size={30} />
+                                            <div className="bg-green-100 text-green-700 rounded-full p-2.5 shrink-0 group-hover:bg-green-200 transition-colors">
+                                                <Icono size={24} />
                                             </div>
                                         )}
                                         <div>
-                                            <p className="text-xl">{item.titulo}</p>
+                                            <p className="text-lg md:text-xl font-medium group-hover:text-primary transition-colors">
+                                                {item.titulo}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -117,28 +122,23 @@ export const Banner = ({ data }: IBanner) => {
                     );
                 })}
             </div>
-        </div>
+        </section>
     );
 };
 
 export const ImagenesCollage = ({ data }: IBanner) => {
     return (
-        <div className="py-10">
-            <div>
-                <h2 className="text-2xl font-semibold">Conoce el mundo Pulguitas! </h2>
-                <h4 className="text-sm">Encontra lo mejor para ellos.</h4>
-            </div>
-            <section className="w-full max-w-7xl mx-auto p-4">
-                {/* GRID CONTAINER:
-         - grid-cols-1: 1 columna en móvil.
-         - md:grid-cols-3: 3 columnas en escritorio.
-         - auto-rows-[250px]: Cada fila tiene una altura base de 250px.
-      */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[250px]">
+        <div className="py-10 px-4 md:px-6">
+            <div className="w-full max-w-7xl mx-auto">
+                <div className="mb-6">
+                    <h2 className="text-2xl md:text-3xl font-semibold">Conoce el mundo Pulguitas!</h2>
+                    <h4 className="text-sm text-muted-foreground">Encontra lo mejor para ellos.</h4>
+                </div>
+
+                {/* Bento Grid Responsivo */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[200px] md:auto-rows-[250px]">
                     {data.map((item, index) => {
-                        // LÓGICA DE POSICIONAMIENTO:
-                        // Si es el primer elemento (index === 0), le decimos que ocupe 2 filas (row-span-2).
-                        // Esto crea el efecto de la columna izquierda alta.
+                        // El primer elemento ocupa 2 filas en pantallas medianas hacia arriba
                         const isLarge = index === 0;
 
                         return (
@@ -146,40 +146,35 @@ export const ImagenesCollage = ({ data }: IBanner) => {
                                 key={index}
                                 href={item.href}
                                 className={`
-                group relative overflow-hidden rounded-3xl bg-black border border-gray-200 duration-1000
-                ${isLarge ? 'md:row-span-2' : 'md:col-span-1'}
-              `}
+                  group relative overflow-hidden rounded-3xl bg-black border border-gray-200 
+                  ${isLarge ? 'md:row-span-2 row-span-2' : 'col-span-1'}
+                `}
                             >
-                                {/* Fondo de Imagen con Next/Image */}
                                 <div className="absolute inset-0 w-full h-full">
                                     <Image
                                         src={item.src}
                                         alt={item.titulo ?? 'Banner'}
                                         fill
-                                        className="object-cover transition-all  group-hover:scale-105 opacity-80  group-hover:opacity-100 duration-500 ease-in-out"
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                                        sizes="(max-width: 768px) 100vw, 33vw"
                                     />
                                 </div>
 
-                                {/* Overlay / Decoración (Círculos de color) */}
-                                {/* Puedes cambiar los colores bg-purple-500, bg-green-500 dinámicamente si quieres */}
+                                {/* Decoración de fondo */}
                                 <div
                                     className={`
-                 absolute -right-4 -top-4 w-32 h-32 rounded-full opacity-80 blur-2xl transition-opacity
-                 ${index % 2 === 0 ? 'bg-purple-500/40' : 'bg-green-500/40'}
-              `}
+                    absolute -right-4 -top-4 w-32 h-32 rounded-full opacity-60 blur-3xl transition-opacity
+                    ${index % 2 === 0 ? 'bg-purple-500/50' : 'bg-green-500/50'}
+                  `}
                                 />
 
-                                {/* Contenido de Texto (Posicionado abajo a la izquierda como la referencia) */}
-                                <div className="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black/60 to-transparent text-white">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        {/* Renderizamos el icono dinámicamente */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                                        <h3 className="text-2xl font-bold">{item.titulo}</h3>
-                                    </div>
+                                <div className="absolute bottom-0 left-0 p-5 md:p-6 w-full text-white z-10">
+                                    <h3 className="text-xl md:text-2xl font-bold mb-1">{item.titulo}</h3>
 
                                     {item.subtitulo && (
-                                        <div className="flex items-center gap-1 text-sm font-medium opacity-90 group-hover:underline">
+                                        <div className="flex items-center gap-2 text-sm font-medium text-gray-200 group-hover:text-white group-hover:translate-x-1 transition-all">
                                             {item.subtitulo}
                                             <ArrowRight className="w-4 h-4" />
                                         </div>
@@ -189,7 +184,7 @@ export const ImagenesCollage = ({ data }: IBanner) => {
                         );
                     })}
                 </div>
-            </section>
+            </div>
         </div>
     );
 };

@@ -7,12 +7,12 @@ interface ILoadingData {
 
 export const LoadingData = ({ texto = 'Cargando datos...' }: ILoadingData) => {
     return (
-        <Item variant={'muted'}>
+        <Item variant={'muted'} className="w-full max-w-sm mx-auto">
             <ItemMedia>
                 <Spinner />
             </ItemMedia>
-            <ItemContent className="line-clamp-1">
-                <ItemTitle>{texto}</ItemTitle>
+            <ItemContent>
+                <ItemTitle className="text-sm font-medium text-muted-foreground animate-pulse">{texto}</ItemTitle>
             </ItemContent>
         </Item>
     );
